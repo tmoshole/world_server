@@ -1,5 +1,12 @@
+package worldServer;
+
+import worldServer.clientHandler.InputHandler;
+import worldServer.clientHandler.robot.Robot;
+
 import java.net.*;
 import java.io.*;
+
+
 public class WorldServer extends Thread {
     private ServerSocket serverSocket;
 
@@ -17,12 +24,12 @@ public class WorldServer extends Thread {
 
                 System.out.println("Connected to " + server.getRemoteSocketAddress());
                 DataInputStream in = new DataInputStream(server.getInputStream());
-
                 System.out.println(in.readUTF());
                 DataOutputStream out = new DataOutputStream(server.getOutputStream());
-                out.writeUTF(new InputHandler(in).getOutput());
-                server.close();
 
+                out.writeUTF("Your Robot is now turning on..");
+                activateRobot(in, out);
+                server.close();
             } catch (SocketTimeoutException s) {
                 System.out.println("Socket timed out!");
                 break;
@@ -31,6 +38,18 @@ public class WorldServer extends Thread {
                 break;
             }
         }
+    }
+
+    private void activateRobot(DataInputStream in, DataOutputStream out) throws IOException {
+         out.writeUTF("Give your Robot a name.");
+         Robot robot = new Robot(in.readUTF().trim());
+         out.writeUTF(robot.getStatus());
+         while (true){
+              String clientInput = in.readUTF().trim();
+              out.writeUTF(new InputHandler(clientInput, robot).getOutput());
+              if (in.readUTF() == "off")
+                  break;
+         }
     }
 
     public static void main(String [] args) {
