@@ -8,7 +8,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,10 +43,14 @@ class WorldServerTest {
         }
     }
 
-//    @Test
-//    void  testValidPort(){
-//
-//    }
+    @Test
+    void  testValidPort() throws IOException {
+        WorldServer server = new WorldServer(8080);
+        // try to connect to client with valid port and server name.
+        Socket client = new Socket("localhost", 8080);
+        assertTrue(true);
+
+    }
 
     @Test
     void testIfClientCanConnect() throws IOException {
